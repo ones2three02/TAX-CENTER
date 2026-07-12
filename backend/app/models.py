@@ -166,3 +166,13 @@ class RiskAlert(Base):
     
     # Relationships
     company = relationship("Company", back_populates="risk_alerts")
+
+class User(Base):
+    __tablename__ = "tax_user"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    role = Column(String(20), default="ADMIN") # ADMIN, STAFF
+    status = Column(String(20), default="ACTIVE") # ACTIVE, DISABLED
+    created_at = Column(DateTime, default=func.now())

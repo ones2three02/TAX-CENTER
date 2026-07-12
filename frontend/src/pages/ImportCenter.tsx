@@ -16,9 +16,10 @@ interface Batch {
 
 interface ImportCenterProps {
   currentMonth: string
+  currentUser?: string
 }
 
-export default function ImportCenter({ currentMonth }: ImportCenterProps) {
+export default function ImportCenter({ currentMonth, currentUser }: ImportCenterProps) {
   const [batches, setBatches] = useState<Batch[]>([])
   const [loadingHistory, setLoadingHistory] = useState(true)
   
@@ -96,7 +97,7 @@ export default function ImportCenter({ currentMonth }: ImportCenterProps) {
     const formData = new FormData()
     formData.append("file", file)
     formData.append("month", currentMonth)
-    formData.append("operator", "集团财务主管")
+    formData.append("operator", currentUser || "集团财务主管")
     
     try {
       setUploading(true)

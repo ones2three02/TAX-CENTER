@@ -12,7 +12,8 @@ from app.routers import (
     declare,
     payment,
     risk,
-    archive
+    archive,
+    auth
 )
 
 # Create database tables automatically
@@ -37,6 +38,7 @@ app.add_middleware(
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 # Include Routers
+app.include_router(auth.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(company.router, prefix="/api")
 app.include_router(employee.router, prefix="/api")
@@ -45,6 +47,31 @@ app.include_router(declare.router, prefix="/api")
 app.include_router(payment.router, prefix="/api")
 app.include_router(risk.router, prefix="/api")
 app.include_router(archive.router, prefix="/api")
+
+from app.database import SessionLocal
+from app.models import User
+
+@app.on_event("startup")
+def initialize_admin_user():
+    db = SessionLocal()
+    try:
+        admin_count = db.query(User).filter(User.username == "admin").count()
+        if admin_count == 0:
+            print("No admin user found. Initializing default admin user...")
+            hashed = auth.hash_password("Admin@123456")
+            default_admin = User(
+                username="admin",
+                hashed_password=hashed,
+                role="ADMIN",
+                status="ACTIVE"
+            )
+            db.add(default_admin)
+            db.commit()
+            print("Default admin user initialized: admin / Admin@123456")
+    except Exception as e:
+        print(f"Error initializing admin user: {e}")
+    finally:
+        db.close()
 
 @app.get("/")
 def read_root():

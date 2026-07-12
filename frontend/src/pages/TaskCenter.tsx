@@ -27,6 +27,7 @@ interface Archive {
 
 interface TaskCenterProps {
   currentMonth: string
+  currentUser?: string
 }
 
 const statusConfig: Record<string, { label: string; class: string; icon: any }> = {
@@ -39,7 +40,7 @@ const statusConfig: Record<string, { label: string; class: string; icon: any }> 
   FAILED: { label: "申报失败", class: "bg-red-500/10 text-red-400 border-red-500/20", icon: AlertCircle },
 }
 
-export default function TaskCenter({ currentMonth }: TaskCenterProps) {
+export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProps) {
   const [tasks, setTasks] = useState<DeclareTask[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshingId, setRefreshingId] = useState<number | null>(null)
@@ -123,10 +124,9 @@ export default function TaskCenter({ currentMonth }: TaskCenterProps) {
         })
       }
 
-      // 2. Update task status
       await api.put(`/declare/tasks/${selectedTask.id}/status`, {
         status: selectedStatus,
-        operator: "集团财务主管"
+        operator: currentUser || "集团财务主管"
       })
 
       setShowModal(false)

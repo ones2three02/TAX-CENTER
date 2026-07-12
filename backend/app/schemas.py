@@ -221,3 +221,23 @@ class DashboardOverview(BaseModel):
     active_risk_alerts: int # 未处理的风险数
     completion_rate: float # 申报完成率
     month: str
+
+# --- User & Auth Schemas ---
+class UserLoginRequest(BaseModel):
+    username: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    role: str
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class TokenResponse(BaseModel):
+    token: str
+    username: str
+    role: str

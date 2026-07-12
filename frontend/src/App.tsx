@@ -9,15 +9,20 @@ import TaskCenter from "./pages/TaskCenter"
 import EmployeeCenter from "./pages/EmployeeCenter"
 import RiskCenter from "./pages/RiskCenter"
 import ArchiveCenter from "./pages/ArchiveCenter"
+import Login from "./pages/Login"
 
 // Import Lucide icons
 import { 
   LayoutDashboard, FileSpreadsheet, Building2, Users, 
   AlertOctagon, Archive, CheckSquare, Moon, Sun, 
-  ChevronDown, UserCheck, CalendarDays
+  LogOut, CalendarDays
 } from "lucide-react"
 
 export default function App() {
+  const [token, setToken] = useState<string | null>(localStorage.getItem("tax_token"))
+  const [currentUser, setCurrentUser] = useState<string | null>(localStorage.getItem("tax_username"))
+  const [role, setRole] = useState<string | null>(localStorage.getItem("tax_role"))
+  
   const [activeTab, setActiveTab] = useState<string>("dashboard")
   const [currentMonth, setCurrentMonth] = useState<string>("2026-07")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
@@ -40,6 +45,29 @@ export default function App() {
     setIsDarkMode(!isDarkMode)
   }
 
+  const handleLoginSuccess = (userToken: string, username: string, userRole: string) => {
+    localStorage.setItem("tax_token", userToken)
+    localStorage.setItem("tax_username", username)
+    localStorage.setItem("tax_role", userRole)
+    setToken(userToken)
+    setCurrentUser(username)
+    setRole(userRole)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("tax_token")
+    localStorage.removeItem("tax_username")
+    localStorage.removeItem("tax_role")
+    setToken(null)
+    setCurrentUser(null)
+    setRole(null)
+  }
+
+  // Intercept and render Login page if not authenticated
+  if (!token) {
+    return <Login onLoginSuccess={handleLoginSuccess} />
+  }
+
   const menuItems = [
     { id: "dashboard", label: "看板 Dashboard", icon: LayoutDashboard },
     { id: "import", label: "大表法人拆分", icon: FileSpreadsheet },
@@ -60,9 +88,9 @@ export default function App() {
       case "dashboard":
         return <Dashboard currentMonth={currentMonth} />
       case "import":
-        return <ImportCenter currentMonth={currentMonth} />
+        return <ImportCenter currentMonth={currentMonth} currentUser={currentUser || "Admin"} />
       case "declare":
-        return <TaskCenter currentMonth={currentMonth} />
+        return <TaskCenter currentMonth={currentMonth} currentUser={currentUser || "Admin"} />
       case "employee":
         return <EmployeeCenter currentMonth={currentMonth} />
       case "risk":
@@ -80,12 +108,12 @@ export default function App() {
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
       
       {/* 1. Left Sidebar */}
-      <aside className="w-64 border-r border-white/5 glass-panel flex flex-col justify-between shrink-0">
+      <aside className="w-64 border-r border-white/5 glass-panel flex flex-col justify-between shrink-0 animate-fade-in">
         <div className="p-6">
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3 mb-8">
             <div className="h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg glow-purple">
-              <span className="text-foreground font-black text-lg tracking-wider">T</span>
+              <span className="text-white font-black text-lg tracking-wider">T</span>
             </div>
             <div>
               <h1 className="text-sm font-black tracking-wider text-foreground m-0 uppercase">TAX-CENTER</h1>
@@ -108,7 +136,7 @@ export default function App() {
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-foreground"}`} />
                   <span>{item.label}</span>
                 </button>
               )
@@ -116,17 +144,24 @@ export default function App() {
           </nav>
         </div>
 
-        {/* Sidebar Footer info */}
-        <div className="p-6 border-t border-white/5 bg-white/2">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
-              财
+        {/* Sidebar Footer info - Operators & Logout */}
+        <div className="p-4 border-t border-white/5 bg-white/2 flex items-center justify-between shrink-0">
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="h-8 w-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 select-none">
+              {currentUser ? currentUser.substring(0, 1).toUpperCase() : "财"}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-foreground truncate">集团财务总监</p>
-              <p className="text-[10px] text-muted-foreground truncate">超级管理员</p>
+              <p className="text-[11px] font-bold text-foreground truncate">{currentUser}</p>
+              <p className="text-[9px] text-muted-foreground truncate">{role === "ADMIN" ? "系统管理员" : "财务人员"}</p>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            title="退出登录"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
         </div>
       </aside>
 
