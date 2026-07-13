@@ -6,7 +6,13 @@ from typing import Optional
 from app.database import get_db
 from app import models, schemas
 
-router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/dashboard", 
+    tags=["Dashboard"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.get("/overview", response_model=schemas.DashboardOverview)
 def get_dashboard_overview(month: str, db: Session = Depends(get_db)):

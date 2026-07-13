@@ -1,9 +1,12 @@
 import hashlib
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
 from app import schemas
+
+security = HTTPBearer()
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -83,3 +86,44 @@ def change_password(
     user.hashed_password = hash_password(new_password)
     db.commit()
     return {"message": "密码修改成功！"}
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+) -> User:
+    """Validate session token and return current active user object."""
+    token = credentials.credentials
+    if not token.startswith("session_token_"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="身份凭证无效，请重新登录",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    parts = token.split("_")
+    if len(parts) < 4:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="身份凭证格式错误",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    username = parts[2]
+    user = db.query(User).filter(User.username == username).first()
+    if not user or user.status != "ACTIVE":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="用户不存在或已被禁用",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    # Verify token signature hash
+    expected_token = f"session_token_{user.username}_{hash_password(user.username)[:16]}"
+    if token != expected_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="身份凭证签名校验失败",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    return user

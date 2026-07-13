@@ -9,7 +9,13 @@ from app.config import settings
 from app.models import ImportBatch
 from app import excel_parser, crud, schemas
 
-router = APIRouter(prefix="/import", tags=["Data Import"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/import", 
+    tags=["Data Import"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.post("/payroll", response_model=schemas.ImportBatchResponse)
 def import_payroll(
@@ -71,6 +77,7 @@ def import_payroll(
     except Exception as e:
         import traceback
         traceback.print_exc()
+        db.rollback()  # Rollback all flushed DB entities on error to ensure atomicity
         # Mark batch as failed
         try:
             merged_batch = db.query(ImportBatch).filter(ImportBatch.id == saved_batch_id).first()

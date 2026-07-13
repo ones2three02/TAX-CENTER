@@ -8,7 +8,13 @@ from app.database import get_db
 from app.config import settings
 from app import crud, schemas
 
-router = APIRouter(prefix="/archive", tags=["Tax Archives"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/archive", 
+    tags=["Tax Archives"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.post("/upload", response_model=schemas.ArchiveResponse)
 def upload_archive_file(

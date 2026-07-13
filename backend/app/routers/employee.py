@@ -4,7 +4,13 @@ from typing import List, Optional
 from app.database import get_db
 from app import crud, schemas, models
 
-router = APIRouter(prefix="/employees", tags=["Employees"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/employees", 
+    tags=["Employees"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.get("", response_model=List[schemas.EmployeeResponse])
 def read_employees(company_id: Optional[int] = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

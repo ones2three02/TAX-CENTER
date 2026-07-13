@@ -4,7 +4,13 @@ from typing import List, Optional
 from app.database import get_db
 from app import crud, schemas
 
-router = APIRouter(prefix="/risk", tags=["Risk Inspection"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/risk", 
+    tags=["Risk Inspection"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.get("/alerts", response_model=List[schemas.RiskAlertResponse])
 def read_risk_alerts(month: Optional[str] = None, db: Session = Depends(get_db)):

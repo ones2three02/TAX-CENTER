@@ -6,7 +6,13 @@ import os
 from app.database import get_db
 from app import crud, schemas, excel_parser, models
 
-router = APIRouter(prefix="/declare", tags=["Tax Declaration"])
+from app.routers.auth import get_current_user
+
+router = APIRouter(
+    prefix="/declare", 
+    tags=["Tax Declaration"],
+    dependencies=[Depends(get_current_user)]
+)
 
 @router.get("/tasks", response_model=List[schemas.DeclareTaskResponse])
 def read_declare_tasks(month: Optional[str] = None, db: Session = Depends(get_db)):
