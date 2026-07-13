@@ -157,8 +157,20 @@ export default function EmployeeCenter({ currentMonth }: EmployeeCenterProps) {
                 <tbody className="divide-y divide-border text-xs">
                   {filteredEmployees.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="py-6 px-6 text-center text-muted-foreground">
-                        未匹配到人员记录
+                      <td colSpan={5} className="py-16 px-6 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-3.5 max-w-sm mx-auto select-none">
+                          <div className="p-3 bg-muted/40 text-muted-foreground rounded-full border border-border">
+                            <Users className="h-6 w-6 opacity-75" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {searchQuery ? "未匹配到相关人员" : "暂无集团人员记录"}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                              {searchQuery ? "请更换搜索词重新查询，支持按姓名、身份证模糊搜索" : "当前月份尚未录入个税数据，录入后系统会自动汇算并生成花名册"}
+                            </p>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   ) : (

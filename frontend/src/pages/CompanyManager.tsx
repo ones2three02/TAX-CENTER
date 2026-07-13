@@ -182,8 +182,20 @@ export default function CompanyManager() {
               <tbody className="divide-y divide-border text-sm">
                 {filteredCompanies.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 px-6 text-center text-muted-foreground">
-                      {searchQuery ? "未匹配到任何法人公司" : "暂无法人企业数据，请点击右上角新增"}
+                    <td colSpan={6} className="py-16 px-6 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3.5 max-w-sm mx-auto select-none">
+                        <div className="p-3 bg-muted/40 text-muted-foreground rounded-full border border-border">
+                          <Building2 className="h-6 w-6 opacity-75" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {searchQuery ? "未匹配到法人主体" : "暂无法人主体数据"}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                            {searchQuery ? "请尝试更换其他名称、税号关键字重新检索" : "您可点击右上角「新增法人公司」进行手动创建"}
+                          </p>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ) : (

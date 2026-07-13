@@ -26,7 +26,27 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<string | null>(localStorage.getItem("tax_username"))
   const [role, setRole] = useState<string | null>(localStorage.getItem("tax_role"))
   
-  const [activeTab, setActiveTab] = useState<string>("dashboard")
+  // Get active tab from URL hash, fallback to dashboard
+  const getHashTab = () => {
+    const hash = window.location.hash.replace("#", "")
+    const validTabs = ["dashboard", "import", "declare", "employee", "risk", "archive", "company"]
+    return validTabs.includes(hash) ? hash : "dashboard"
+  }
+
+  const [activeTab, setActiveTab] = useState<string>(getHashTab())
+
+  // Sync hash changes with state to support browser back/forward history navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveTab(getHashTab())
+    }
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
+  }, [])
+
+  const handleTabChange = (tabId: string) => {
+    window.location.hash = tabId
+  }
   const [currentMonth, setCurrentMonth] = useState<string>("2026-07")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
 
@@ -161,7 +181,7 @@ export default function App() {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleTabChange(item.id)}
                   className={`group w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                     isActive 
                       ? "bg-primary text-white shadow-md shadow-primary/20 glow-purple" 

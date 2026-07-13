@@ -195,8 +195,18 @@ export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProp
             <tbody className="divide-y divide-border text-sm">
               {tasks.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 px-6 text-center text-muted-foreground">
-                    本月暂无生成申报任务，请前往“个税拆分导入”上传工资汇总表
+                  <td colSpan={6} className="py-16 px-6 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-3.5 max-w-md mx-auto select-none">
+                      <div className="p-3 bg-muted/40 text-muted-foreground rounded-full border border-border">
+                        <CheckSquare className="h-6 w-6 opacity-75" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">本月暂无申报任务台账</p>
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                          当前月份尚未录入并解析个税数据。请前往「大表法人拆分」上传对应月份的工资汇总 Excel 文件以初始化任务台账。
+                        </p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ) : (
