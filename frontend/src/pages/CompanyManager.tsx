@@ -197,9 +197,9 @@ export default function CompanyManager() {
       {/* Modal Dialog */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-card w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl animate-scale-up border border-border">
+          <div className="bg-card w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl animate-scale-up border border-border flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b border-border bg-gradient-to-r from-primary/10 to-transparent">
+            <div className="flex justify-between items-center p-6 border-b border-border bg-gradient-to-r from-primary/10 to-transparent shrink-0">
               <div className="flex items-center space-x-2">
                 <Sparkles className="h-5 w-5 text-primary animate-pulse" />
                 <h3 className="font-bold text-foreground text-base">
@@ -215,95 +215,97 @@ export default function CompanyManager() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSave} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">法人公司名称 *</label>
-                <input 
-                  type="text" 
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="如: 武汉山道文化传播有限公司"
-                  className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
-                  required
-                />
-              </div>
+            <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 space-y-4 overflow-y-auto flex-1 max-h-[60vh] pr-4">
+                <div>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">法人公司名称 *</label>
+                  <input 
+                    type="text" 
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="如: 武汉山道文化传播有限公司"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
+                    required
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">统一社会信用代码</label>
-                  <input 
-                    type="text" 
-                    value={creditCode}
-                    onChange={(e) => setCreditCode(e.target.value)}
-                    placeholder="18位信用代码"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">纳税人识别号</label>
-                  <input 
-                    type="text" 
-                    value={taxNumber}
-                    onChange={(e) => setTaxNumber(e.target.value)}
-                    placeholder="纳税申报税号"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">开户银行</label>
-                  <input 
-                    type="text" 
-                    value={bankName}
-                    onChange={(e) => setBankName(e.target.value)}
-                    placeholder="如: 招商银行武汉光谷支行"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">银行账号</label>
-                  <input 
-                    type="text" 
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    placeholder="银行转账主账号"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">运行状态</label>
-                <div className="flex space-x-4">
-                  <label className="flex items-center space-x-2 text-sm text-foreground cursor-pointer">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5">统一社会信用代码</label>
                     <input 
-                      type="radio" 
-                      name="modalStatus" 
-                      value="ACTIVE"
-                      checked={status === "ACTIVE"}
-                      onChange={() => setStatus("ACTIVE")}
-                      className="text-primary focus:ring-primary bg-transparent border-white/10"
+                      type="text" 
+                      value={creditCode}
+                      onChange={(e) => setCreditCode(e.target.value)}
+                      placeholder="18位信用代码"
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
                     />
-                    <span>启用</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm text-foreground cursor-pointer">
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5">纳税人识别号</label>
                     <input 
-                      type="radio" 
-                      name="modalStatus" 
-                      value="INACTIVE"
-                      checked={status === "INACTIVE"}
-                      onChange={() => setStatus("INACTIVE")}
-                      className="text-primary focus:ring-primary bg-transparent border-white/10"
+                      type="text" 
+                      value={taxNumber}
+                      onChange={(e) => setTaxNumber(e.target.value)}
+                      placeholder="纳税申报税号"
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
                     />
-                    <span>停用</span>
-                  </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5">开户银行</label>
+                    <input 
+                      type="text" 
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      placeholder="如: 招商银行武汉光谷支行"
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5">银行账号</label>
+                    <input 
+                      type="text" 
+                      value={bankAccount}
+                      onChange={(e) => setBankAccount(e.target.value)}
+                      placeholder="银行转账主账号"
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/60"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">运行状态</label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2 text-sm text-foreground cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="modalStatus" 
+                        value="ACTIVE"
+                        checked={status === "ACTIVE"}
+                        onChange={() => setStatus("ACTIVE")}
+                        className="text-primary focus:ring-primary bg-transparent border-white/10"
+                      />
+                      <span>启用</span>
+                    </label>
+                    <label className="flex items-center space-x-2 text-sm text-foreground cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="modalStatus" 
+                        value="INACTIVE"
+                        checked={status === "INACTIVE"}
+                        onChange={() => setStatus("INACTIVE")}
+                        className="text-primary focus:ring-primary bg-transparent border-white/10"
+                      />
+                      <span>停用</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 pt-4 border-t border-white/5">
+              <div className="flex justify-end space-x-3 p-6 border-t border-border bg-card shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setShowModal(false)}
