@@ -12,7 +12,7 @@ import ArchiveCenter from "./pages/ArchiveCenter"
 import Login from "./pages/Login"
 
 // Import Toast service
-import { toast, ToastEvent } from "./utils/toast"
+import { toast, type ToastEvent } from "./utils/toast"
 
 // Import Lucide icons
 import { 
