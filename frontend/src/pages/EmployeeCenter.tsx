@@ -126,8 +126,21 @@ export default function EmployeeCenter({ currentMonth }: EmployeeCenterProps) {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center h-[40vh]">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+            <div className="glass-panel border border-border rounded-2xl p-6 space-y-4 animate-pulse">
+              <div className="grid grid-cols-5 gap-4 pb-4 border-b border-border">
+                <div className="h-4 bg-muted/40 rounded-md"></div>
+                <div className="h-4 bg-muted/40 rounded-md col-span-2"></div>
+                <div className="h-4 bg-muted/40 rounded-md"></div>
+                <div className="h-4 bg-muted/40 rounded-md text-right"></div>
+              </div>
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="grid grid-cols-5 gap-4 py-3 border-b border-border/50 last:border-0">
+                  <div className="h-3.5 bg-muted/20 rounded-md"></div>
+                  <div className="h-3.5 bg-muted/20 rounded-md col-span-2"></div>
+                  <div className="h-3.5 bg-muted/20 rounded-md"></div>
+                  <div className="h-3.5 bg-muted/20 rounded-md text-right"></div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="glass-panel border border-border rounded-2xl overflow-y-auto max-h-[calc(100vh-320px)] relative shadow-sm">

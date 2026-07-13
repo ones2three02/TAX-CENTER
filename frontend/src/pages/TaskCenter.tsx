@@ -4,6 +4,7 @@ import {
   Building2, Download, UploadCloud, RefreshCw, CheckCircle, 
   Clock, AlertCircle, FileText, CheckSquare, Eye, X, Image as ImageIcon
 } from "lucide-react"
+import { toast } from "../utils/toast"
 
 interface DeclareTask {
   id: number
@@ -79,10 +80,11 @@ export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProp
       // Auto upgrade status to WAIT_DECLARE (or DATA_READY -> WAIT_DECLARE)
       if (task.status === "DATA_READY") {
         await api.put(`/declare/tasks/${task.id}/status`, { status: "WAIT_DECLARE" })
-        fetchTasks()
       }
+      toast.success("个税标准申报模板生成成功，已开始下载")
+      fetchTasks()
     } catch (err) {
-      alert("生成和下载报税模版失败，请稍后重试")
+      toast.error("生成和下载报税模版失败，请稍后重试")
     } finally {
       setRefreshingId(null)
     }
@@ -131,8 +133,9 @@ export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProp
 
       setShowModal(false)
       fetchTasks()
+      toast.success("申报任务状态更新及凭证归档成功！")
     } catch (err) {
-      alert("保存失败")
+      toast.error("保存失败")
     }
   }
 
@@ -158,8 +161,23 @@ export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProp
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center h-[50vh]">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        <div className="glass-panel border border-border rounded-2xl p-6 space-y-4 animate-pulse">
+          <div className="grid grid-cols-6 gap-4 pb-4 border-b border-border">
+            <div className="h-4 bg-muted/40 rounded-md col-span-2"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md text-right"></div>
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="grid grid-cols-6 gap-4 py-3 border-b border-border/50 last:border-0">
+              <div className="h-3.5 bg-muted/20 rounded-md col-span-2"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md text-right"></div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="glass-panel border border-border rounded-2xl overflow-y-auto max-h-[calc(100vh-250px)] relative shadow-sm">

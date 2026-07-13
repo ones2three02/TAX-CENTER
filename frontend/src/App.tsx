@@ -11,11 +11,14 @@ import RiskCenter from "./pages/RiskCenter"
 import ArchiveCenter from "./pages/ArchiveCenter"
 import Login from "./pages/Login"
 
+// Import Toast service
+import { toast, ToastEvent } from "./utils/toast"
+
 // Import Lucide icons
 import { 
   LayoutDashboard, FileSpreadsheet, Building2, Users, 
   AlertOctagon, Archive, CheckSquare, Moon, Sun, 
-  LogOut, CalendarDays
+  LogOut, CalendarDays, CheckCircle2, AlertTriangle, Info, AlertCircle, X
 } from "lucide-react"
 
 export default function App() {
@@ -26,6 +29,22 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>("dashboard")
   const [currentMonth, setCurrentMonth] = useState<string>("2026-07")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
+
+  // Toast notification state
+  const [toasts, setToasts] = useState<ToastEvent[]>([])
+
+  // Subscribe to Toast service
+  useEffect(() => {
+    const unsubscribe = toast.subscribe((newToast) => {
+      setToasts((prev) => [...prev, newToast])
+      
+      // Auto-remove toast after its duration
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== newToast.id))
+      }, newToast.duration || 3000)
+    })
+    return unsubscribe
+  }, [])
 
   // Initialize theme
   useEffect(() => {
@@ -38,9 +57,11 @@ export default function App() {
     if (isDarkMode) {
       document.documentElement.classList.remove("dark")
       document.documentElement.classList.add("light")
+      toast.info("已切换至白天明亮模式 ☀️")
     } else {
       document.documentElement.classList.add("dark")
       document.documentElement.classList.remove("light")
+      toast.info("已切换至暗黑霓虹模式 🌙")
     }
     setIsDarkMode(!isDarkMode)
   }
@@ -52,6 +73,10 @@ export default function App() {
     setToken(userToken)
     setCurrentUser(username)
     setRole(userRole)
+    // Delay slightly to match the page animation
+    setTimeout(() => {
+      toast.success(`欢迎回来，${username}！系统安全会话已建立。`)
+    }, 200)
   }
 
   const handleLogout = () => {
@@ -61,11 +86,18 @@ export default function App() {
     setToken(null)
     setCurrentUser(null)
     setRole(null)
+    toast.info("您的会话已注销，请重新登录。")
   }
 
   // Intercept and render Login page if not authenticated
   if (!token) {
-    return <Login onLoginSuccess={handleLoginSuccess} />
+    return (
+      <>
+        <Login onLoginSuccess={handleLoginSuccess} />
+        {/* Render Toast container on login screen as well */}
+        <ToastContainer toasts={toasts} setToasts={setToasts} />
+      </>
+    )
   }
 
   const menuItems = [
@@ -188,7 +220,10 @@ export default function App() {
               <div className="relative">
                 <select
                   value={currentMonth}
-                  onChange={(e) => setCurrentMonth(e.target.value)}
+                  onChange={(e) => {
+                    setCurrentMonth(e.target.value)
+                    toast.success(`切换当前申报期为: ${e.target.value}`)
+                  }}
                   className="bg-transparent border-0 text-xs font-bold text-foreground focus:outline-none pr-4 cursor-pointer"
                 >
                   {monthsList.map(m => (
@@ -209,12 +244,54 @@ export default function App() {
           </div>
         </header>
 
-        {/* Content Pane */}
-        <div className="flex-1 overflow-y-auto p-8 max-w-7xl w-full mx-auto">
+        {/* Content Pane - Includes automatic page slide/fade transition key */}
+        <div key={activeTab} className="flex-1 overflow-y-auto p-8 max-w-7xl w-full mx-auto animate-fade-in">
           {renderActivePage()}
         </div>
       </main>
 
+      {/* Global Toast Container */}
+      <ToastContainer toasts={toasts} setToasts={setToasts} />
+    </div>
+  )
+}
+
+interface ToastContainerProps {
+  toasts: ToastEvent[]
+  setToasts: React.Dispatch<React.SetStateAction<ToastEvent[]>>
+}
+
+function ToastContainer({ toasts, setToasts }: ToastContainerProps) {
+  return (
+    <div className="fixed top-6 right-6 z-[9999] flex flex-col space-y-3 pointer-events-none max-w-sm w-full">
+      {toasts.map((t) => {
+        const config = {
+          success: { bg: "bg-green-500/10 dark:bg-green-500/5 border-green-500/30 text-green-700 dark:text-green-400", icon: CheckCircle2 },
+          error: { bg: "bg-destructive/10 dark:bg-destructive/5 border-destructive/30 text-destructive", icon: AlertCircle },
+          warning: { bg: "bg-amber-500/10 dark:bg-amber-500/5 border-amber-500/30 text-amber-700 dark:text-amber-400", icon: AlertTriangle },
+          info: { bg: "bg-primary/10 dark:bg-primary/5 border-primary/30 text-primary-foreground dark:text-primary", icon: Info },
+        }[t.type] || { bg: "bg-card border-border text-foreground", icon: Info }
+        
+        const Icon = config.icon
+        
+        return (
+          <div
+            key={t.id}
+            className={`pointer-events-auto flex items-center justify-between p-4 rounded-xl border backdrop-blur-md shadow-2xl transition-all duration-300 animate-slide-in ${config.bg}`}
+          >
+            <div className="flex items-center space-x-2.5 min-w-0">
+              <Icon className="h-4.5 w-4.5 shrink-0" />
+              <span className="text-xs font-semibold leading-relaxed truncate-2-lines">{t.message}</span>
+            </div>
+            <button
+              onClick={() => setToasts((prev) => prev.filter((item) => item.id !== t.id))}
+              className="ml-4 text-muted-foreground hover:text-foreground shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )
+      })}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import api from "../utils/api"
 import { FileSpreadsheet, Upload, History, CheckCircle, AlertCircle, RefreshCw, HelpCircle, X } from "lucide-react"
+import { toast } from "../utils/toast"
 
 interface Batch {
   id: number
@@ -122,6 +123,7 @@ export default function ImportCenter({ currentMonth, currentUser }: ImportCenter
       })
       setFile(null)
       fetchHistory()
+      toast.success("个税大表分流解析完成！")
     } catch (err: any) {
       console.error("上传失败详情:", err)
       const errMsg = err.response?.data?.detail || 
@@ -131,6 +133,7 @@ export default function ImportCenter({ currentMonth, currentUser }: ImportCenter
         type: "error",
         msg: errMsg
       })
+      toast.error("大表导入失败")
     } finally {
       setUploading(false)
     }

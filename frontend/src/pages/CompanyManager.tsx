@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import api from "../utils/api"
 import { Building2, Plus, Edit2, Check, X, ShieldAlert, Sparkles, Search } from "lucide-react"
+import { toast } from "../utils/toast"
 
 interface Company {
   id: number
@@ -69,8 +70,8 @@ export default function CompanyManager() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!companyName.strip()) {
-      alert("公司名称不能为空")
+    if (!companyName.trim()) {
+      toast.warning("公司名称不能为空")
       return
     }
 
@@ -89,10 +90,11 @@ export default function CompanyManager() {
       } else {
         await api.post("/companies", payload)
       }
+      toast.success(editingCompany ? "修改法人主体信息成功！" : "添加新法人公司成功！")
       setShowModal(false)
       fetchCompanies()
     } catch (err: any) {
-      alert(err.response?.data?.detail || "保存失败")
+      toast.error(err.response?.data?.detail || "保存失败")
     }
   }
 
@@ -100,9 +102,10 @@ export default function CompanyManager() {
     const nextStatus = comp.status === "ACTIVE" ? "INACTIVE" : "ACTIVE"
     try {
       await api.put(`/companies/${comp.id}`, { status: nextStatus })
+      toast.success(`已成功${nextStatus === "ACTIVE" ? "启用" : "停用"}法人公司 [${comp.company_name}]`)
       fetchCompanies()
     } catch (err) {
-      alert("更新状态失败")
+      toast.error("更新状态失败")
     }
   }
 
@@ -144,8 +147,23 @@ export default function CompanyManager() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center h-[50vh]">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        <div className="glass-panel border border-border rounded-2xl p-6 space-y-4 animate-pulse">
+          <div className="grid grid-cols-6 gap-4 pb-4 border-b border-border">
+            <div className="h-4 bg-muted/40 rounded-md col-span-2"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md"></div>
+            <div className="h-4 bg-muted/40 rounded-md text-right"></div>
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="grid grid-cols-6 gap-4 py-3 border-b border-border/50 last:border-0">
+              <div className="h-3.5 bg-muted/20 rounded-md col-span-2"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md"></div>
+              <div className="h-3.5 bg-muted/20 rounded-md text-right"></div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="space-y-3">
