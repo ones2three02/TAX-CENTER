@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import api from "../utils/api"
-import { Building2, Plus, Edit2, Check, X, ShieldAlert, Sparkles } from "lucide-react"
+import { Building2, Plus, Edit2, Check, X, ShieldAlert, Sparkles, Search } from "lucide-react"
 
 interface Company {
   id: number
@@ -16,6 +16,7 @@ interface Company {
 
 export default function CompanyManager() {
   const [companies, setCompanies] = useState<Company[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingCompany, setEditingCompany] = useState<Company | null>(null)
@@ -105,6 +106,12 @@ export default function CompanyManager() {
     }
   }
 
+  const filteredCompanies = companies.filter(comp => 
+    comp.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (comp.credit_code && comp.credit_code.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (comp.tax_number && comp.tax_number.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -124,73 +131,100 @@ export default function CompanyManager() {
         </button>
       </div>
 
+      {/* Search Filter Toolbar */}
+      <div className="flex items-center space-x-2 bg-card border border-border p-3.5 rounded-2xl w-full max-w-md shadow-sm">
+        <Search className="h-4.5 w-4.5 text-muted-foreground shrink-0" />
+        <input
+          type="text"
+          placeholder="搜索法人公司名称、税号、信用代码..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full text-xs bg-transparent border-0 text-foreground focus:outline-none placeholder:text-muted-foreground/60"
+        />
+      </div>
+
       {loading ? (
         <div className="flex items-center justify-center h-[50vh]">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
-        <div className="glass-panel rounded-2xl overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-white/5 bg-white/2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                <th className="py-4 px-6">法人公司名称</th>
-                <th className="py-4 px-6">统一社会信用代码</th>
-                <th className="py-4 px-6">纳税人识别号</th>
-                <th className="py-4 px-6">开户银行及账号</th>
-                <th className="py-4 px-6">状态</th>
-                <th className="py-4 px-6 text-right">操作</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 text-sm">
-              {companies.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 px-6 text-center text-muted-foreground">
-                    暂无法人企业数据，请点击右上角新增
-                  </td>
+        <div className="space-y-3">
+          <div className="glass-panel border border-border rounded-2xl overflow-y-auto max-h-[calc(100vh-280px)] relative shadow-sm">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/30 text-xs font-bold text-foreground uppercase tracking-wider sticky top-0 bg-card z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)]">
+                  <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">法人公司名称</th>
+                  <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">统一社会信用代码</th>
+                  <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">纳税人识别号</th>
+                  <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">开户银行及账号</th>
+                  <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">状态</th>
+                  <th className="py-4 px-6 text-right sticky top-0 bg-card border-b border-border">操作</th>
                 </tr>
-              ) : (
-                companies.map((comp) => (
-                  <tr key={comp.id} className="hover:bg-white/2 transition-colors">
-                    <td className="py-4 px-6 font-semibold text-foreground">{comp.company_name}</td>
-                    <td className="py-4 px-6 font-mono text-muted-foreground">{comp.credit_code || "-"}</td>
-                    <td className="py-4 px-6 font-mono text-muted-foreground">{comp.tax_number || "-"}</td>
-                    <td className="py-4 px-6">
-                      {comp.bank_name ? (
-                        <div className="space-y-1">
-                          <p className="text-foreground text-xs">{comp.bank_name}</p>
-                          <p className="text-muted-foreground font-mono text-[11px]">{comp.bank_account}</p>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6">
-                      <button 
-                        onClick={() => toggleCompanyStatus(comp)}
-                        className={`inline-flex items-center space-x-1 py-1 px-2.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
-                          comp.status === "ACTIVE" 
-                            ? "bg-green-500/10 text-green-400 border border-green-500/20" 
-                            : "bg-muted text-muted-foreground border border-white/5"
-                        }`}
-                      >
-                        <span className={`h-1.5 w-1.5 rounded-full ${comp.status === "ACTIVE" ? "bg-green-400" : "bg-muted-foreground"}`} />
-                        <span>{comp.status === "ACTIVE" ? "启用" : "禁用"}</span>
-                      </button>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button 
-                        onClick={() => openEditModal(comp)}
-                        className="p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
-                        title="修改信息"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-border text-sm">
+                {filteredCompanies.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 px-6 text-center text-muted-foreground">
+                      {searchQuery ? "未匹配到任何法人公司" : "暂无法人企业数据，请点击右上角新增"}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredCompanies.map((comp) => (
+                    <tr key={comp.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="py-4 px-6 font-semibold text-foreground">{comp.company_name}</td>
+                      <td className="py-4 px-6 font-mono text-muted-foreground">{comp.credit_code || "-"}</td>
+                      <td className="py-4 px-6 font-mono text-muted-foreground">{comp.tax_number || "-"}</td>
+                      <td className="py-4 px-6">
+                        {comp.bank_name ? (
+                          <div className="space-y-0.5">
+                            <p className="text-foreground text-xs font-semibold">{comp.bank_name}</p>
+                            <p className="text-muted-foreground font-mono text-[10px]">{comp.bank_account}</p>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-6">
+                        <button 
+                          onClick={() => toggleCompanyStatus(comp)}
+                          className={`inline-flex items-center space-x-1.5 py-1 px-2.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                            comp.status === "ACTIVE" 
+                              ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20" 
+                              : "bg-muted text-muted-foreground border border-border"
+                          }`}
+                        >
+                          <span className={`h-1.5 w-1.5 rounded-full ${comp.status === "ACTIVE" ? "bg-green-500" : "bg-muted-foreground"}`} />
+                          <span>{comp.status === "ACTIVE" ? "启用" : "禁用"}</span>
+                        </button>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <button 
+                          onClick={() => openEditModal(comp)}
+                          className="p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-secondary transition-colors cursor-pointer"
+                          title="修改信息"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Footer Statistics */}
+          <div className="text-[11px] text-muted-foreground px-2 flex justify-between items-center select-none font-medium">
+            <span>共筛选出 {filteredCompanies.length} 家法人企业（总计 {companies.length} 家）</span>
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="text-primary hover:underline text-xs cursor-pointer font-semibold"
+              >
+                清除搜索
+              </button>
+            )}
+          </div>
         </div>
       )}
 
