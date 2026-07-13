@@ -133,7 +133,7 @@ export default function ArchiveCenter({ currentMonth }: ArchiveCenterProps) {
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[calc(100vh-270px)] pr-2">
           {filteredArchives.length === 0 ? (
             <div className="col-span-full glass-panel p-12 text-center text-muted-foreground rounded-2xl">
               暂无匹配的电子档案文件。

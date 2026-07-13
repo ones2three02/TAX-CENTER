@@ -100,7 +100,7 @@ export default function RiskCenter({ currentMonth }: RiskCenterProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[calc(100vh-270px)] overflow-y-auto pr-2 border border-border/80 p-4 bg-card/40 rounded-2xl shadow-sm">
                 {unresolvedAlerts.map((alert) => (
                   <div 
                     key={alert.id} 

@@ -130,18 +130,18 @@ export default function EmployeeCenter({ currentMonth }: EmployeeCenterProps) {
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
             </div>
           ) : (
-            <div className="glass-panel rounded-2xl overflow-hidden">
+            <div className="glass-panel border border-border rounded-2xl overflow-y-auto max-h-[calc(100vh-320px)] relative shadow-sm">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/5 bg-white/2 text-xs font-semibold text-muted-foreground uppercase">
-                    <th className="py-3 px-6">姓名</th>
-                    <th className="py-3 px-6">身份证号</th>
-                    <th className="py-3 px-6">所属分公司</th>
-                    <th className="py-3 px-6">状态</th>
-                    <th className="py-3 px-6 text-right">联系方式</th>
+                  <tr className="border-b border-border bg-muted/30 text-xs font-bold text-foreground uppercase tracking-wider sticky top-0 bg-card z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)]">
+                    <th className="py-3 px-6 sticky top-0 bg-card border-b border-border">姓名</th>
+                    <th className="py-3 px-6 sticky top-0 bg-card border-b border-border">身份证号</th>
+                    <th className="py-3 px-6 sticky top-0 bg-card border-b border-border">所属分公司</th>
+                    <th className="py-3 px-6 sticky top-0 bg-card border-b border-border">状态</th>
+                    <th className="py-3 px-6 text-right sticky top-0 bg-card border-b border-border">联系方式</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 text-xs">
+                <tbody className="divide-y divide-border text-xs">
                   {filteredEmployees.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-6 px-6 text-center text-muted-foreground">

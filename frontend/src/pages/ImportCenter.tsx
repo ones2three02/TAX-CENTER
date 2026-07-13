@@ -299,21 +299,21 @@ export default function ImportCenter({ currentMonth, currentUser }: ImportCenter
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-y-auto max-h-[40vh] border border-border rounded-xl relative">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-white/5 text-xs font-semibold text-muted-foreground uppercase">
-                  <th className="py-3 px-4">原始文件名</th>
-                  <th className="py-3 px-4">申报月份</th>
-                  <th className="py-3 px-4">解析总行数</th>
-                  <th className="py-3 px-4">成功入库</th>
-                  <th className="py-3 px-4">标红忽略人头</th>
-                  <th className="py-3 px-4">操作人</th>
-                  <th className="py-3 px-4">状态</th>
-                  <th className="py-3 px-4 text-right">时间</th>
+                <tr className="border-b border-border bg-muted/30 text-xs font-bold text-foreground uppercase tracking-wider sticky top-0 bg-card z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)]">
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">原始文件名</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">申报月份</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">解析总行数</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">成功入库</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">标红忽略人头</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">操作人</th>
+                  <th className="py-3 px-4 sticky top-0 bg-card border-b border-border">状态</th>
+                  <th className="py-3 px-4 text-right sticky top-0 bg-card border-b border-border">时间</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-xs">
+              <tbody className="divide-y divide-border text-xs">
                 {batches.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-6 px-4 text-center text-muted-foreground">

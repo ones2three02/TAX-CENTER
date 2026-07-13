@@ -162,19 +162,19 @@ export default function TaskCenter({ currentMonth, currentUser }: TaskCenterProp
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
-        <div className="glass-panel rounded-2xl overflow-hidden">
+        <div className="glass-panel border border-border rounded-2xl overflow-y-auto max-h-[calc(100vh-250px)] relative shadow-sm">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5 bg-white/2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                <th className="py-4 px-6">申报法人主体</th>
-                <th className="py-4 px-6 text-center">报税人数</th>
-                <th className="py-4 px-6">应纳税款</th>
-                <th className="py-4 px-6">当前进度</th>
-                <th className="py-4 px-6">核对人</th>
-                <th className="py-4 px-6 text-right">操作栏</th>
+              <tr className="border-b border-border bg-muted/30 text-xs font-bold text-foreground uppercase tracking-wider sticky top-0 bg-card z-10 shadow-[0_1px_0_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)]">
+                <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">申报法人主体</th>
+                <th className="py-4 px-6 text-center sticky top-0 bg-card border-b border-border">报税人数</th>
+                <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">应纳税款</th>
+                <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">当前进度</th>
+                <th className="py-4 px-6 sticky top-0 bg-card border-b border-border">核对人</th>
+                <th className="py-4 px-6 text-right sticky top-0 bg-card border-b border-border">操作栏</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-sm">
+            <tbody className="divide-y divide-border text-sm">
               {tasks.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 px-6 text-center text-muted-foreground">
