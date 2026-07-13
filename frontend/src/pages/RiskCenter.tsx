@@ -148,9 +148,17 @@ export default function RiskCenter({ currentMonth }: RiskCenterProps) {
           {/* History / Resolved alerts */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">已处理记录</h3>
-            <div className="glass-panel p-4 rounded-2xl space-y-3 h-fit max-h-[500px] overflow-y-auto pr-1">
+            <div className="glass-panel p-4 rounded-2xl space-y-3 h-fit max-h-[500px] overflow-y-auto pr-1 border border-border shadow-sm">
               {resolvedAlerts.length === 0 ? (
-                <p className="text-xs text-muted-foreground/60 italic text-center py-6">暂无已处理记录</p>
+                <div className="flex flex-col items-center justify-center space-y-2.5 py-8 text-center select-none">
+                  <div className="p-2.5 bg-muted/40 text-muted-foreground rounded-full border border-border">
+                    <AlertOctagon className="h-4.5 w-4.5 opacity-75" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">暂无已处理记录</p>
+                    <p className="text-[10px] text-muted-foreground mt-1 max-w-[180px] mx-auto leading-relaxed">当月核实通过或被忽略的个税警报记录会在此处归档展现</p>
+                  </div>
+                </div>
               ) : (
                 resolvedAlerts.map((alert) => (
                   <div key={alert.id} className="p-3 bg-white/2 rounded-xl border border-white/5 text-xs space-y-1.5 opacity-60">

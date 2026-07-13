@@ -135,9 +135,18 @@ export default function ArchiveCenter({ currentMonth }: ArchiveCenterProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[calc(100vh-270px)] pr-2">
           {filteredArchives.length === 0 ? (
-            <div className="col-span-full glass-panel p-12 text-center text-muted-foreground rounded-2xl">
-              暂无匹配的电子档案文件。
-              <p className="text-xs text-muted-foreground/60 mt-1">您可在申报任务台账中上传申报截图或回执来生成档案记录。</p>
+            <div className="col-span-full glass-panel p-16 text-center rounded-2xl border border-border shadow-sm">
+              <div className="flex flex-col items-center justify-center space-y-3.5 max-w-md mx-auto select-none">
+                <div className="p-3 bg-muted/40 text-muted-foreground rounded-full border border-border">
+                  <Layers className="h-6 w-6 opacity-75" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">暂无匹配的税务电子档案</p>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    当前筛选条件下未查询到任何归档附件。您可在「申报任务台账」中为各分公司上传申报截图、缴税回执或扣款凭证来自动生成归档。
+                  </p>
+                </div>
+              </div>
             </div>
           ) : (
             filteredArchives.map((arc) => {
